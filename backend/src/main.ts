@@ -7,7 +7,7 @@ async function bootstrap() {
 
   // Configurar CORS
   app.enableCors({
-    origin: process.env.FRONTEND_ORIGIN || 'http://localhost:5173',
+    origin: process.env.FRONTEND_ORIGIN || 'https://risc0-three.vercel.app',
     credentials: true,
   });
 
