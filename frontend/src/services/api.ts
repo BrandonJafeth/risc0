@@ -13,7 +13,7 @@ import type {
   EstadisticaNivel,
 } from '@/types';
 
-const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'https://risc0.onrender.com/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
