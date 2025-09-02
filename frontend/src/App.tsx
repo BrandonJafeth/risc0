@@ -8,11 +8,9 @@ import { Shield, Plus, Database } from 'lucide-react';
 
 // Add this button component to your app to test Sentry's error tracking
 function ErrorButton() {
-  // Only show in development mode
-  if (import.meta.env.MODE !== 'development') {
-    return null;
-  }
-
+  // Temporarily show in all environments for testing
+  // TODO: Remove this after testing Sentry in production
+  
   return (
     <button
       onClick={() => {
@@ -20,13 +18,15 @@ function ErrorButton() {
         Sentry.logger.info('User triggered test error', {
           action: 'test_error_button_click',
           environment: import.meta.env.MODE,
+          timestamp: new Date().toISOString(),
+          url: window.location.href,
         });
-        throw new Error('This is your first error!');
+        throw new Error(`Production Sentry test error - ${new Date().toISOString()}`);
       }}
       className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded mr-4 text-xs"
-      title="Test Sentry Error (Dev Only)"
+      title={`Test Sentry Error (${import.meta.env.MODE})`}
     >
-      🚨 Test Error
+      🚨 Test Sentry ({import.meta.env.MODE})
     </button>
   );
 }

@@ -31,6 +31,16 @@ Sentry.init({
   release: import.meta.env.VITE_APP_VERSION || '1.0.0',
 });
 
+// Send a test log to verify Sentry is working
+Sentry.logger.info('App initialized', {
+  environment: import.meta.env.MODE,
+  timestamp: new Date().toISOString(),
+  url: window.location.href,
+  userAgent: navigator.userAgent,
+});
+
+console.log('Sentry initialized in', import.meta.env.MODE, 'mode');
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <App />
