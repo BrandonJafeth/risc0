@@ -5,7 +5,8 @@ import App from './App';
 import './index.css';
 
 Sentry.init({
-  dsn: import.meta.env.VITE_SENTRY_DSN,
+  dsn: import.meta.env.VITE_SENTRY_DSN || "https://65acf69b6ff5e2130d632de5d175385d@o4509947514191872.ingest.us.sentry.io/4509947515633664",
+  environment: import.meta.env.MODE || 'production',
   // Setting this option to true will send default PII data to Sentry.
   // For example, automatic IP address collection on events
   sendDefaultPii: true,
@@ -13,15 +14,21 @@ Sentry.init({
     Sentry.browserTracingIntegration(),
     Sentry.replayIntegration()
   ],
-  // Tracing
-  tracesSampleRate: 1.0, //  Capture 100% of the transactions
+  // Tracing - reduce sample rate in production
+  tracesSampleRate: import.meta.env.MODE === 'development' ? 1.0 : 0.1,
   // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
-  tracePropagationTargets: ["localhost", /^https:\/\/yourserver\.io\/api/],
-  // Session Replay
-  replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
-  replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+  tracePropagationTargets: [
+    "localhost", 
+    /^https:\/\/risc0\.onrender\.com\/api/,
+    /^https:\/\/risc0-three\.vercel\.app/
+  ],
+  // Session Replay - different rates for dev/prod
+  replaysSessionSampleRate: import.meta.env.MODE === 'development' ? 1.0 : 0.1,
+  replaysOnErrorSampleRate: 1.0, // Always capture replays when errors occur
   // Enable logs to be sent to Sentry
-  enableLogs: true
+  enableLogs: true,
+  // Release tracking
+  release: import.meta.env.VITE_APP_VERSION || '1.0.0',
 });
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

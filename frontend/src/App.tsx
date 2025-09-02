@@ -8,18 +8,25 @@ import { Shield, Plus, Database } from 'lucide-react';
 
 // Add this button component to your app to test Sentry's error tracking
 function ErrorButton() {
+  // Only show in development mode
+  if (import.meta.env.MODE !== 'development') {
+    return null;
+  }
+
   return (
     <button
       onClick={() => {
         // Send a log before throwing the error
         Sentry.logger.info('User triggered test error', {
           action: 'test_error_button_click',
+          environment: import.meta.env.MODE,
         });
         throw new Error('This is your first error!');
       }}
-      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-4"
+      className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded mr-4 text-xs"
+      title="Test Sentry Error (Dev Only)"
     >
-      Break the world
+      🚨 Test Error
     </button>
   );
 }
