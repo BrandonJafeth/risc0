@@ -1,9 +1,28 @@
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import * as Sentry from '@sentry/react';
 import { Dashboard } from '@/pages/Dashboard';
 import { NuevaEvaluacion } from '@/pages/NuevaEvaluacion';
 import { Catalogos } from '@/pages/Catalogos';
 import { Shield, Plus, Database } from 'lucide-react';
+
+// Add this button component to your app to test Sentry's error tracking
+function ErrorButton() {
+  return (
+    <button
+      onClick={() => {
+        // Send a log before throwing the error
+        Sentry.logger.info('User triggered test error', {
+          action: 'test_error_button_click',
+        });
+        throw new Error('This is your first error!');
+      }}
+      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-4"
+    >
+      Break the world
+    </button>
+  );
+}
 
 const Navigation = () => {
   const location = useLocation();
@@ -43,6 +62,9 @@ const Navigation = () => {
                 );
               })}
             </div>
+          </div>
+          <div className="flex items-center">
+            <ErrorButton />
           </div>
         </div>
       </div>
