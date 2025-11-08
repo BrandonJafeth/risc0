@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabaseRiesgoService } from '@/services/supabase';
+import { supabaseRiesgoService } from '@/services/api';
 import type { Riesgo, CrearRiesgoDto, FiltrosRiesgo, ResultadoPaginado, EstadisticaNivel } from '@/types';
 
 /**

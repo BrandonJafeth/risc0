@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { supabaseVulnerabilidadService } from '@/services/supabase';
+import { supabaseVulnerabilidadService } from '@/services/api';
 import type { Vulnerabilidad, CrearVulnerabilidadDto, ActualizarVulnerabilidadDto } from '@/types';
 
 /**

@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { supabaseAmenazaService } from '@/services/supabase';
+import { supabaseAmenazaService } from '@/services/api';
 import type { Amenaza, CrearAmenazaDto, ActualizarAmenazaDto } from '@/types';
 
 /**

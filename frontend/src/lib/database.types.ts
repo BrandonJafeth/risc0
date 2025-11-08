@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -11,90 +11,93 @@ export interface Database {
     Tables: {
       amenazas: {
         Row: {
+          activo: boolean | null
+          actualizado_en: string | null
+          creado_en: string | null
+          descripcion: string | null
           id: string
           nombre: string
-          descripcion: string | null
           valor: number
-          activo: boolean
-          creado_en: string
-          actualizado_en: string
         }
         Insert: {
+          activo?: boolean | null
+          actualizado_en?: string | null
+          creado_en?: string | null
+          descripcion?: string | null
           id?: string
           nombre: string
-          descripcion?: string | null
           valor: number
-          activo?: boolean
-          creado_en?: string
-          actualizado_en?: string
         }
         Update: {
+          activo?: boolean | null
+          actualizado_en?: string | null
+          creado_en?: string | null
+          descripcion?: string | null
           id?: string
           nombre?: string
-          descripcion?: string | null
           valor?: number
-          activo?: boolean
-          creado_en?: string
-          actualizado_en?: string
         }
-      }
-      vulnerabilidades: {
-        Row: {
-          id: string
-          nombre: string
-          descripcion: string | null
-          valor: number
-          activo: boolean
-          creado_en: string
-          actualizado_en: string
-        }
-        Insert: {
-          id?: string
-          nombre: string
-          descripcion?: string | null
-          valor: number
-          activo?: boolean
-          creado_en?: string
-          actualizado_en?: string
-        }
-        Update: {
-          id?: string
-          nombre?: string
-          descripcion?: string | null
-          valor?: number
-          activo?: boolean
-          creado_en?: string
-          actualizado_en?: string
-        }
+        Relationships: []
       }
       riesgos: {
         Row: {
-          id: string
           amenaza_id: string
-          vulnerabilidad_id: string
-          puntaje: number
-          nivel: 'Bajo' | 'Medio' | 'Alto' | 'Crítico'
           color_hex: string
-          creado_en: string
+          creado_en: string | null
+          id: string
+          nivel: string
+          puntaje: number
+          vulnerabilidad_id: string
         }
         Insert: {
-          id?: string
           amenaza_id: string
-          vulnerabilidad_id: string
-          puntaje: number
-          nivel: 'Bajo' | 'Medio' | 'Alto' | 'Crítico'
           color_hex: string
-          creado_en?: string
+          creado_en?: string | null
+          id?: string
+          nivel: string
+          puntaje: number
+          vulnerabilidad_id: string
         }
         Update: {
-          id?: string
           amenaza_id?: string
-          vulnerabilidad_id?: string
-          puntaje?: number
-          nivel?: 'Bajo' | 'Medio' | 'Alto' | 'Crítico'
           color_hex?: string
-          creado_en?: string
+          creado_en?: string | null
+          id?: string
+          nivel?: string
+          puntaje?: number
+          vulnerabilidad_id?: string
         }
+        Relationships: []
+      }
+      vulnerabilidades: {
+        Row: {
+          activo: boolean | null
+          actualizado_en: string | null
+          creado_en: string | null
+          descripcion: string | null
+          id: string
+          nombre: string
+          valor: number
+        }
+        Insert: {
+          activo?: boolean | null
+          actualizado_en?: string | null
+          creado_en?: string | null
+          descripcion?: string | null
+          id?: string
+          nombre: string
+          valor: number
+        }
+        Update: {
+          activo?: boolean | null
+          actualizado_en?: string | null
+          creado_en?: string | null
+          descripcion?: string | null
+          id?: string
+          nombre?: string
+          valor?: number
+        }
+        Relationships: []
       }
     }
     Views: {
@@ -104,6 +107,9 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
       [_ in never]: never
     }
   }

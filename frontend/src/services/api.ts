@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabaseClient';
+﻿import { supabase } from '@/lib/supabaseClient';
 import type {
   Amenaza,
   Vulnerabilidad,
@@ -12,6 +12,27 @@ import type {
   ResultadoPaginado,
   EstadisticaNivel,
 } from '@/types';
+
+// Funciones auxiliares para manejar conversiones de null a undefined
+const mapAmenaza = (item: any): Amenaza => ({
+  id: item.id,
+  nombre: item.nombre,
+  descripcion: item.descripcion || undefined,
+  valor: item.valor,
+  activo: item.activo ?? true,
+  creadoEn: item.creado_en || new Date().toISOString(),
+  actualizadoEn: item.actualizado_en || new Date().toISOString(),
+});
+
+const mapVulnerabilidad = (item: any): Vulnerabilidad => ({
+  id: item.id,
+  nombre: item.nombre,
+  descripcion: item.descripcion || undefined,
+  valor: item.valor,
+  activo: item.activo ?? true,
+  creadoEn: item.creado_en || new Date().toISOString(),
+  actualizadoEn: item.actualizado_en || new Date().toISOString(),
+});
 
 // Función auxiliar para calcular el riesgo
 const calcularRiesgo = (amenazaValor: number, vulnerabilidadValor: number) => {
@@ -59,15 +80,7 @@ export const supabaseAmenazaService = {
       throw error;
     }
 
-    return (data || []).map((item: any) => ({
-      id: item.id,
-      nombre: item.nombre,
-      descripcion: item.descripcion,
-      valor: item.valor,
-      activo: item.activo,
-      creadoEn: item.creado_en,
-      actualizadoEn: item.actualizado_en,
-    }));
+    return (data || []).map(mapAmenaza);
   },
 
   crear: async (data: CrearAmenazaDto): Promise<Amenaza> => {
@@ -87,15 +100,7 @@ export const supabaseAmenazaService = {
       throw error;
     }
 
-    return {
-      id: result.id,
-      nombre: result.nombre,
-      descripcion: result.descripcion,
-      valor: result.valor,
-      activo: result.activo,
-      creadoEn: result.creado_en,
-      actualizadoEn: result.actualizado_en,
-    };
+    return mapAmenaza(result);
   },
 
   actualizar: async (id: string, data: ActualizarAmenazaDto): Promise<Amenaza> => {
@@ -114,15 +119,7 @@ export const supabaseAmenazaService = {
       throw error;
     }
 
-    return {
-      id: result.id,
-      nombre: result.nombre,
-      descripcion: result.descripcion,
-      valor: result.valor,
-      activo: result.activo,
-      creadoEn: result.creado_en,
-      actualizadoEn: result.actualizado_en,
-    };
+    return mapAmenaza(result);
   },
 
   cambiarEstado: async (id: string, activo: boolean): Promise<Amenaza> => {
@@ -141,15 +138,7 @@ export const supabaseAmenazaService = {
       throw error;
     }
 
-    return {
-      id: data.id,
-      nombre: data.nombre,
-      descripcion: data.descripcion,
-      valor: data.valor,
-      activo: data.activo,
-      creadoEn: data.creado_en,
-      actualizadoEn: data.actualizado_en,
-    };
+    return mapAmenaza(data);
   },
 };
 
@@ -173,15 +162,7 @@ export const supabaseVulnerabilidadService = {
       throw error;
     }
 
-    return (data || []).map((item: any) => ({
-      id: item.id,
-      nombre: item.nombre,
-      descripcion: item.descripcion,
-      valor: item.valor,
-      activo: item.activo,
-      creadoEn: item.creado_en,
-      actualizadoEn: item.actualizado_en,
-    }));
+    return (data || []).map(mapVulnerabilidad);
   },
 
   crear: async (data: CrearVulnerabilidadDto): Promise<Vulnerabilidad> => {
@@ -201,15 +182,7 @@ export const supabaseVulnerabilidadService = {
       throw error;
     }
 
-    return {
-      id: result.id,
-      nombre: result.nombre,
-      descripcion: result.descripcion,
-      valor: result.valor,
-      activo: result.activo,
-      creadoEn: result.creado_en,
-      actualizadoEn: result.actualizado_en,
-    };
+    return mapVulnerabilidad(result);
   },
 
   actualizar: async (id: string, data: ActualizarVulnerabilidadDto): Promise<Vulnerabilidad> => {
@@ -228,15 +201,7 @@ export const supabaseVulnerabilidadService = {
       throw error;
     }
 
-    return {
-      id: result.id,
-      nombre: result.nombre,
-      descripcion: result.descripcion,
-      valor: result.valor,
-      activo: result.activo,
-      creadoEn: result.creado_en,
-      actualizadoEn: result.actualizado_en,
-    };
+    return mapVulnerabilidad(result);
   },
 
   cambiarEstado: async (id: string, activo: boolean): Promise<Vulnerabilidad> => {
@@ -255,15 +220,7 @@ export const supabaseVulnerabilidadService = {
       throw error;
     }
 
-    return {
-      id: data.id,
-      nombre: data.nombre,
-      descripcion: data.descripcion,
-      valor: data.valor,
-      activo: data.activo,
-      creadoEn: data.creado_en,
-      actualizadoEn: data.actualizado_en,
-    };
+    return mapVulnerabilidad(data);
   },
 };
 
@@ -302,9 +259,9 @@ export const supabaseRiesgoService = {
       amenazaId: result.amenaza_id,
       vulnerabilidadId: result.vulnerabilidad_id,
       puntaje: result.puntaje,
-      nivel: result.nivel as any,
+      nivel: result.nivel as 'Bajo' | 'Medio' | 'Alto' | 'Crítico',
       colorHex: result.color_hex,
-      creadoEn: result.creado_en,
+      creadoEn: result.creado_en || new Date().toISOString(),
       amenaza,
       vulnerabilidad,
     };
@@ -315,7 +272,7 @@ export const supabaseRiesgoService = {
 
     let query = supabase
       .from('riesgos')
-      .select('*, amenazas(*), vulnerabilidades(*)', { count: 'exact' });
+      .select('*, amenazas!riesgos_amenaza_id_fkey(*), vulnerabilidades!riesgos_vulnerabilidad_id_fkey(*)', { count: 'exact' });
 
     if (nivel) {
       query = query.eq('nivel', nivel);
@@ -357,27 +314,11 @@ export const supabaseRiesgoService = {
       amenazaId: item.amenaza_id,
       vulnerabilidadId: item.vulnerabilidad_id,
       puntaje: item.puntaje,
-      nivel: item.nivel,
+      nivel: item.nivel as 'Bajo' | 'Medio' | 'Alto' | 'Crítico',
       colorHex: item.color_hex,
-      creadoEn: item.creado_en,
-      amenaza: item.amenazas ? {
-        id: item.amenazas.id,
-        nombre: item.amenazas.nombre,
-        descripcion: item.amenazas.descripcion,
-        valor: item.amenazas.valor,
-        activo: item.amenazas.activo,
-        creadoEn: item.amenazas.creado_en,
-        actualizadoEn: item.amenazas.actualizado_en,
-      } : undefined,
-      vulnerabilidad: item.vulnerabilidades ? {
-        id: item.vulnerabilidades.id,
-        nombre: item.vulnerabilidades.nombre,
-        descripcion: item.vulnerabilidades.descripcion,
-        valor: item.vulnerabilidades.valor,
-        activo: item.vulnerabilidades.activo,
-        creadoEn: item.vulnerabilidades.creado_en,
-        actualizadoEn: item.vulnerabilidades.actualizado_en,
-      } : undefined,
+      creadoEn: item.creado_en || new Date().toISOString(),
+      amenaza: item.amenazas ? mapAmenaza(item.amenazas) : undefined,
+      vulnerabilidad: item.vulnerabilidades ? mapVulnerabilidad(item.vulnerabilidades) : undefined,
     }));
 
     return {
@@ -392,7 +333,7 @@ export const supabaseRiesgoService = {
   obtenerUltimos: async (limite: number = 10): Promise<Riesgo[]> => {
     const { data, error } = await supabase
       .from('riesgos')
-      .select('*, amenazas(*), vulnerabilidades(*)')
+      .select('*, amenazas!riesgos_amenaza_id_fkey(*), vulnerabilidades!riesgos_vulnerabilidad_id_fkey(*)')
       .order('creado_en', { ascending: false })
       .limit(limite);
 
@@ -406,27 +347,11 @@ export const supabaseRiesgoService = {
       amenazaId: item.amenaza_id,
       vulnerabilidadId: item.vulnerabilidad_id,
       puntaje: item.puntaje,
-      nivel: item.nivel,
+      nivel: item.nivel as 'Bajo' | 'Medio' | 'Alto' | 'Crítico',
       colorHex: item.color_hex,
-      creadoEn: item.creado_en,
-      amenaza: item.amenazas ? {
-        id: item.amenazas.id,
-        nombre: item.amenazas.nombre,
-        descripcion: item.amenazas.descripcion,
-        valor: item.amenazas.valor,
-        activo: item.amenazas.activo,
-        creadoEn: item.amenazas.creado_en,
-        actualizadoEn: item.amenazas.actualizado_en,
-      } : undefined,
-      vulnerabilidad: item.vulnerabilidades ? {
-        id: item.vulnerabilidades.id,
-        nombre: item.vulnerabilidades.nombre,
-        descripcion: item.vulnerabilidades.descripcion,
-        valor: item.vulnerabilidades.valor,
-        activo: item.vulnerabilidades.activo,
-        creadoEn: item.vulnerabilidades.creado_en,
-        actualizadoEn: item.vulnerabilidades.actualizado_en,
-      } : undefined,
+      creadoEn: item.creado_en || new Date().toISOString(),
+      amenaza: item.amenazas ? mapAmenaza(item.amenazas) : undefined,
+      vulnerabilidad: item.vulnerabilidades ? mapVulnerabilidad(item.vulnerabilidades) : undefined,
     }));
   },
 
@@ -459,7 +384,7 @@ export const supabaseRiesgoService = {
   obtenerPorId: async (id: string): Promise<Riesgo> => {
     const { data, error } = await supabase
       .from('riesgos')
-      .select('*, amenazas(*), vulnerabilidades(*)')
+      .select('*, amenazas!riesgos_amenaza_id_fkey(*), vulnerabilidades!riesgos_vulnerabilidad_id_fkey(*)')
       .eq('id', id)
       .single();
 
@@ -473,27 +398,11 @@ export const supabaseRiesgoService = {
       amenazaId: data.amenaza_id,
       vulnerabilidadId: data.vulnerabilidad_id,
       puntaje: data.puntaje,
-      nivel: data.nivel,
+      nivel: data.nivel as 'Bajo' | 'Medio' | 'Alto' | 'Crítico',
       colorHex: data.color_hex,
-      creadoEn: data.creado_en,
-      amenaza: data.amenazas ? {
-        id: data.amenazas.id,
-        nombre: data.amenazas.nombre,
-        descripcion: data.amenazas.descripcion,
-        valor: data.amenazas.valor,
-        activo: data.amenazas.activo,
-        creadoEn: data.amenazas.creado_en,
-        actualizadoEn: data.amenazas.actualizado_en,
-      } : undefined,
-      vulnerabilidad: data.vulnerabilidades ? {
-        id: data.vulnerabilidades.id,
-        nombre: data.vulnerabilidades.nombre,
-        descripcion: data.vulnerabilidades.descripcion,
-        valor: data.vulnerabilidades.valor,
-        activo: data.vulnerabilidades.activo,
-        creadoEn: data.vulnerabilidades.creado_en,
-        actualizadoEn: data.vulnerabilidades.actualizado_en,
-      } : undefined,
+      creadoEn: data.creado_en || new Date().toISOString(),
+      amenaza: data.amenazas ? mapAmenaza(data.amenazas) : undefined,
+      vulnerabilidad: data.vulnerabilidades ? mapVulnerabilidad(data.vulnerabilidades) : undefined,
     };
   },
 };
