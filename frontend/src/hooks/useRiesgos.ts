@@ -67,14 +67,9 @@ export const useRiesgos = (filtros: FiltrosRiesgo = {}) => {
   }, [cargarEstadisticas]);
 
   useEffect(() => {
-    if (Object.keys(filtros).length > 0) {
-      cargarRiesgos();
-    }
-  }, [filtros]);
-
-  useEffect(() => {
+    cargarRiesgos();
     cargarEstadisticas();
-  }, []);
+  }, [cargarRiesgos, cargarEstadisticas]);
 
   return {
     riesgos,

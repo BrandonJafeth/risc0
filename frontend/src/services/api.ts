@@ -233,6 +233,15 @@ export const supabaseRiesgoService = {
       supabaseVulnerabilidadService.obtenerPorId(data.vulnerabilidadId),
     ]);
 
+    // Verificar que ambos estén activos
+    if (!amenaza.activo) {
+      throw new Error(`La amenaza "${amenaza.nombre}" está desactivada. Por favor, actívala antes de crear la evaluación.`);
+    }
+
+    if (!vulnerabilidad.activo) {
+      throw new Error(`La vulnerabilidad "${vulnerabilidad.nombre}" está desactivada. Por favor, actívala antes de crear la evaluación.`);
+    }
+
     // Calcular el riesgo
     const { puntaje, nivel, colorHex } = calcularRiesgo(amenaza.valor, vulnerabilidad.valor);
 

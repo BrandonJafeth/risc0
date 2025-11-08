@@ -77,7 +77,8 @@ export const NuevaEvaluacion = () => {
       // Reset form
       window.location.reload();
     } catch (error) {
-      toast.error('Error al guardar la evaluación');
+      const errorMessage = error instanceof Error ? error.message : 'Error al guardar la evaluación';
+      toast.error(errorMessage);
       console.error('Error:', error);
     } finally {
       setIsSubmitting(false);

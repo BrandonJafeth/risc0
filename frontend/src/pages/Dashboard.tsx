@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { TarjetaKPI } from '@/components/TarjetaKPI';
 import { BadgeNivel } from '@/components/BadgeNivel';
@@ -6,11 +6,17 @@ import { useRiesgos } from '@/hooks/useRiesgos';
 
 
 export const Dashboard = () => {
-  const { riesgos, estadisticas, isLoading, error, cargarUltimosRiesgos } = useRiesgos();
+  const [paginaActual, setPaginaActual] = useState(1);
+  const limite = 10;
+  
+  const { riesgos, estadisticas, isLoading, error, paginacion, cargarRiesgos } = useRiesgos({
+    page: paginaActual,
+    limit: limite,
+  });
 
   useEffect(() => {
-    cargarUltimosRiesgos(10);
-  }, []); // Remove the dependency to prevent infinite loop
+    cargarRiesgos();
+  }, [paginaActual, cargarRiesgos]);
 
   const formatearFecha = (fecha: string) => {
     return new Date(fecha).toLocaleDateString('es-ES', {
@@ -72,10 +78,13 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      {/* Tabla de últimos riesgos */}
+      {/* Tabla de riesgos evaluados */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold">Últimos 10 Riesgos Evaluados</h2>
+          <h2 className="text-xl font-semibold">Riesgos Evaluados</h2>
+          <p className="text-sm text-gray-600 mt-1">
+            Mostrando {riesgos.length} de {paginacion.total} riesgos
+          </p>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -124,6 +133,31 @@ export const Dashboard = () => {
         {riesgos.length === 0 && (
           <div className="text-center py-8 text-gray-500">
             No hay riesgos evaluados aún
+          </div>
+        )}
+        
+        {/* Paginación */}
+        {paginacion.totalPaginas > 1 && (
+          <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+            <div className="text-sm text-gray-600">
+              Página {paginacion.pagina} de {paginacion.totalPaginas}
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPaginaActual(prev => Math.max(1, prev - 1))}
+                disabled={paginacion.pagina === 1}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Anterior
+              </button>
+              <button
+                onClick={() => setPaginaActual(prev => Math.min(paginacion.totalPaginas, prev + 1))}
+                disabled={paginacion.pagina === paginacion.totalPaginas}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Siguiente
+              </button>
+            </div>
           </div>
         )}
       </div>
