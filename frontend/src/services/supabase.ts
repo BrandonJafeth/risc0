@@ -497,10 +497,3 @@ export const supabaseRiesgoService = {
     };
   },
 };
-
-// Exportaciones compatibles con la API anterior
-export const amenazaService = supabaseAmenazaService;
-export const vulnerabilidadService = supabaseVulnerabilidadService;
-export { supabaseRiesgoService as riesgoService };
-
-export default supabase;
