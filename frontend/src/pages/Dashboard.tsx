@@ -8,7 +8,7 @@ import { useRiesgos } from '@/hooks/useRiesgos';
 export const Dashboard = () => {
   const [paginaActual, setPaginaActual] = useState(1);
   const limite = 10;
-  
+
   const { riesgos, estadisticas, isLoading, error, paginacion, cargarRiesgos } = useRiesgos({
     page: paginaActual,
     limit: limite,
@@ -135,7 +135,7 @@ export const Dashboard = () => {
             No hay riesgos evaluados aún
           </div>
         )}
-        
+
         {/* Paginación */}
         {paginacion.totalPaginas > 1 && (
           <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
