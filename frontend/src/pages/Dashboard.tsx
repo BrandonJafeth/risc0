@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { TarjetaKPI } from '@/components/TarjetaKPI';
 import { BadgeNivel } from '@/components/BadgeNivel';
@@ -9,14 +9,10 @@ export const Dashboard = () => {
   const [paginaActual, setPaginaActual] = useState(1);
   const limite = 10;
 
-  const { riesgos, estadisticas, isLoading, error, paginacion, cargarRiesgos } = useRiesgos({
+  const { riesgos, estadisticas, isLoading, error, paginacion } = useRiesgos({
     page: paginaActual,
     limit: limite,
   });
-
-  useEffect(() => {
-    cargarRiesgos();
-  }, [paginaActual, cargarRiesgos]);
 
   const formatearFecha = (fecha: string) => {
     return new Date(fecha).toLocaleDateString('es-ES', {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { riesgoService } from '@/services/api';
 import type { Riesgo, CrearRiesgoDto, FiltrosRiesgo, ResultadoPaginado, EstadisticaNivel } from '@/types';
 
@@ -14,11 +14,15 @@ export const useRiesgos = (filtros: FiltrosRiesgo = {}) => {
     totalPaginas: 0,
   });
 
+  // Memorizar los filtros para evitar re-renders innecesarios
+  const filtrosMemorizados = useMemo(() => JSON.stringify(filtros), [filtros]);
+
   const cargarRiesgos = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
-      const resultado = await riesgoService.listar(filtros);
+      const filtrosActuales = JSON.parse(filtrosMemorizados);
+      const resultado = await riesgoService.listar(filtrosActuales);
       setRiesgos(resultado.datos);
       setPaginacion({
         total: resultado.total,
@@ -31,7 +35,7 @@ export const useRiesgos = (filtros: FiltrosRiesgo = {}) => {
     } finally {
       setIsLoading(false);
     }
-  }, [filtros]);
+  }, [filtrosMemorizados]);
 
   const cargarEstadisticas = useCallback(async () => {
     try {
@@ -68,8 +72,11 @@ export const useRiesgos = (filtros: FiltrosRiesgo = {}) => {
 
   useEffect(() => {
     cargarRiesgos();
+  }, [filtrosMemorizados]); // Solo depende de los filtros memorizados
+
+  useEffect(() => {
     cargarEstadisticas();
-  }, [cargarRiesgos, cargarEstadisticas]);
+  }, []); // Solo se ejecuta una vez al montar
 
   return {
     riesgos,
